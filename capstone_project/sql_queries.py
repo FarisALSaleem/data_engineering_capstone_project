@@ -273,7 +273,38 @@ fact_immigration_table_populate = ("""
 """)
 
 # quality checks
-quality_check_query = ("""
+foreign_key_quality_check_query = ("""
+    INSERT into fact_immigration(
+        immigrant_id,
+        visa_category,
+        birth_country_code,
+        birth_year,
+        immigrant_age,
+        immigrant_gender,
+        residential_country_code,
+        admission_port,
+        arrival_state_code,
+        transportation_method_id,
+        arrival_date,
+        departure_date,
+        record_date,
+        arrival_status,
+        departure_status,
+        allowed_stay,
+        flight_number,
+        airline,
+        admission_number,
+        num_year,
+        num_month
+        ) VALUES (
+        999999, 'B2019','1000',
+        1995, 25, 'Dude', '1000',
+        'OTT','ON', 10, '1-2-1970',
+        '1-2-1970', '1-2-1970', NULL,
+        NULL, '1-2-1970', NULL, 1,
+        1, 2020, 5 );
+""")
+count_quality_check_query = ("""
     SELECT COUNT(*) FROM {};
 """)
 

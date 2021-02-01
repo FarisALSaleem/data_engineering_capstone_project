@@ -109,17 +109,30 @@ def populate_tables(spark, df_clean_immigration, df_clean_demographics, df_clean
         df.write.jdbc(url=url, table=table_name, mode=mode, properties=properties)
 
 
-def quality_checks(table_name, user, password, dbname, host):
+def count_quality_checks(table_name, user, password, dbname, host):
     """Checks if there is any rows in the database"""
     conn = psycopg2.connect(host=host, dbname=dbname, user=user, password=password)
     cur = conn.cursor()
 
-    cur.execute(quality_check_query.format(table_name))
+    cur.execute(count_quality_check_query.format(table_name))
     rows = cur.fetchone()[0]
     conn.close()
 
     if rows == 0:
-        print(f"{table_name} failed quality check (zero records)")
+        print(f"{table_name} failed count quality check (zero records)")
     else:
-        print(f"{table_name} passed quality check ({rows})")
+        print(f"{table_name} passed count quality check ({rows})")
     return 0
+
+
+def foreign_key_quality_checks(table_name, user, password, dbname, host):
+    """Checks if foreign key was set up properly in the database"""
+    conn = psycopg2.connect(host=host, dbname=dbname, user=user, password=password)
+    cur = conn.cursor()
+    try:
+        cur.execute(foreign_key_quality_check_query.format(table_name))
+    except psycopg2.errors.ForeignKeyViolation:
+        print(f"{table_name} passed foreign key quality check")
+        return True
+    print(f"{table_name} failed foreign key quality check")
+    return False
